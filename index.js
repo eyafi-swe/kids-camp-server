@@ -81,9 +81,9 @@ const run = async () => {
 
     app.get('/services',async(req,res)=>{
       const query = {};
-      
+      const size = parseInt(req.query.size);
       const cursor = serviceCollection.find(query);
-      const result = await cursor.toArray();
+      const result = await cursor.limit(size).toArray();
       res.send(result);
     })
   } finally {
