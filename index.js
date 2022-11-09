@@ -30,6 +30,7 @@ const run = async () => {
       const query = { _id: ObjectId(id) };
       const service = await serviceCollection.findOne(query);
       res.send(service);
+
     })
 
     app.get('/blog', async (req, res) => {
@@ -43,15 +44,18 @@ const run = async () => {
       const review = req.body;
       const result = await serviceReviewsCollection.insertOne(review);
       console.log(`Inserted with the _id: ${result.insertedId}`);
-      res.send({result,review});
-      // console.log(review)
+      res.send({ result, review });
     })
 
-    app.get('/reviews',async(req,res)=>{
+    app.get('/reviews', async (req, res) => {
       let query = {};
       const service_id_query = req.query.service_id;
-      if(service_id_query){
-        query = {service_id:service_id_query};
+      const email_query = req.query.user_email;
+      if (service_id_query) {
+        query = { service_id: service_id_query };
+      }
+      if(email_query){
+        query = {user_email:email_query};
       }
       const cursor = await serviceReviewsCollection.find(query);
       const result = await cursor.toArray();
