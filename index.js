@@ -25,6 +25,16 @@ const run = async () => {
       res.send(result);
     })
 
+
+    app.post('/services',async(req,res)=>{
+      let serviceObj = req.body;
+      serviceObj.date = new Date();
+      const result = await serviceCollection.insertOne(serviceObj);
+      console.log(`Inserted with the _id: ${result.insertedId}`);
+      console.log(serviceObj);
+      res.send(result);
+    })
+
     app.get('/services/:id', async (req, res) => {
       const id = req.params.id;
       const query = { _id: ObjectId(id) };
