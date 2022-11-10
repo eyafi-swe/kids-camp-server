@@ -86,12 +86,10 @@ const run = async () => {
     app.get('/reviews', verifyJWT, async (req, res) => {
 
       const decoded = req.decoded;
-      if (decoded.email !== req.query.user_email) {
-        res.status(403).send({ message: 'unauthorized access' })
-      }
+
 
       let query = {};
-      
+
       const service_id_query = req.query.service_id;
       const email_query = req.query.user_email;
 
@@ -100,6 +98,10 @@ const run = async () => {
       }
       if (email_query) {
         query = { user_email: email_query };
+        if (decoded.email !== req.query.user_email) {
+          res.status(403).send({ message: 'unauthorized access' })
+        }
+
       }
       const cursor = await serviceReviewsCollection.find(query);
       const result = await cursor.toArray();
