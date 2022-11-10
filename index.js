@@ -40,7 +40,7 @@ const run = async () => {
     app.get('/services', async (req, res) => {
       const query = {};
       const size = parseInt(req.query.size);
-      const cursor = serviceCollection.find(query).sort({date:-1});
+      const cursor = serviceCollection.find(query).sort({ date: -1 });
       const result = await cursor.limit(size).toArray();
       res.send(result);
     })
@@ -75,6 +75,38 @@ const run = async () => {
       const result = await serviceReviewsCollection.insertOne(review);
       console.log(`Inserted with the _id: ${result.insertedId}`);
       res.send({ result, review });
+    })
+
+    app.get('/reviews/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const service = await serviceReviewsCollection.findOne(query);
+      res.send(service);
+
+    })
+
+    app.put('/update_review/:id', async (req, res) => {
+      const id = req.params.id;
+      const updatedReview = req.body;
+      const filter = { _id: ObjectId(id) };
+      const options = { upsert: true };
+      const updateDoc = {
+        $set: {
+          reviewText: updatedReview.reviewText,
+          service_id: updatedReview.service_id,
+          service_name: updatedReview.service_name,
+          user_name: updatedReview.user_name,
+          user_email: updatedReview.user_email,
+          user_photoURL: updatedReview.user_photoURL
+        },
+      };
+      // reviewText, service_id, service_name, user_name, user_email, user_photoURL 
+      const result = await serviceReviewsCollection.updateOne(filter, updateDoc, options);
+      console.log(
+        `${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s)`,
+      );
+      res.send(result);
+      
     })
 
     app.post('/jwt', (req, res) => {
