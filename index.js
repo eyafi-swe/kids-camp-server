@@ -40,7 +40,7 @@ const run = async () => {
     app.get('/services', async (req, res) => {
       const query = {};
       const size = parseInt(req.query.size);
-      const cursor = serviceCollection.find(query).sort({ date: -1 });
+      const cursor = serviceCollection.find(query);
       const result = await cursor.limit(size).toArray();
       res.send(result);
     })
@@ -51,7 +51,7 @@ const run = async () => {
       serviceObj.date = new Date();
       const result = await serviceCollection.insertOne(serviceObj);
       console.log(`Inserted with the _id: ${result.insertedId}`);
-      console.log(serviceObj);
+      // console.log(serviceObj);
       res.send(result);
     })
 
@@ -72,6 +72,7 @@ const run = async () => {
 
     app.post('/reviews', async (req, res) => {
       const review = req.body;
+      review.date = new Date();
       const result = await serviceReviewsCollection.insertOne(review);
       console.log(`Inserted with the _id: ${result.insertedId}`);
       res.send({ result, review });
@@ -135,10 +136,11 @@ const run = async () => {
         }
 
       }
-      const cursor = await serviceReviewsCollection.find(query);
+      const cursor = await serviceReviewsCollection.find(query).sort({ date: -1 });
       const result = await cursor.toArray();
       res.send(result);
     })
+
 
     app.delete('/reviews/:id', async (req, res) => {
       const id = req.params.id;
