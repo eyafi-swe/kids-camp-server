@@ -40,7 +40,7 @@ const run = async () => {
     app.get('/services', async (req, res) => {
       const query = {};
       const size = parseInt(req.query.size);
-      const cursor = serviceCollection.find(query);
+      const cursor = serviceCollection.find(query).sort({date:-1});
       const result = await cursor.limit(size).toArray();
       res.send(result);
     })
